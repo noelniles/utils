@@ -1,0 +1,100 @@
+#! /usr/bin/python3
+
+
+"""Utility to make a new C++ class
+
+Copyright (C) 2016 Noel Niles noelniles@gmail.com
+
+This file is part of a utility library.
+
+    The utilities are free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Elements is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+"""
+import sys
+
+
+usage = 'Usage: newclass.py [class_name] [superclass (optional)'
+
+header ='''\
+#ifndef {upper_classname}_H
+#define {upper_classname}_H
+
+class {classname}
+{{
+    public:
+        {classname}() throw();
+        {classname}(const {classname}& orig) throw();
+        ~{classname}() throw();
+
+    protected:
+
+    private:
+}};
+#endif // End {upper_classname}_H
+'''
+
+cc ='''\
+#include "{classname}.h"
+
+
+{classname}::{classname}() throw()
+/* COMMENT */
+{{
+
+}}
+
+{classname}::{classname}(const {classname}& orig) throw()
+/* COMMENT */
+{{
+
+}}
+
+{classname}::~{classname}() throw()
+/* COMMENT */
+{{
+
+}}
+'''
+
+makefile = '''\
+$(CC) = g++ -std=c++11 -Wall -Wextra -Werror -Wpedantic
+'''
+
+
+if __name__ == '__main__':
+    """Start a new C++ class."""
+    nargs = len(sys.argv)
+    
+    parent = None
+
+    if nargs != 2 and nargs != 3:
+        print(nargs)
+        print(usage)
+        sys.exit(2)
+
+    elif nargs == 3:
+        parent = sys.argv[2]
+
+    classname = sys.argv[1]
+    upper_classname = classname.upper()
+
+    filled_header = header.format(**locals())
+    filled_cc = cc.format(**locals())
+
+    # Create and write the files
+    with open(classname+'.h', 'w+') as f:
+        f.write(filled_header)
+
+    with open(classname+'.cc', 'w+') as f:
+        f.write(filled_cc)
+
